@@ -1,0 +1,29 @@
+.main-body {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  text-align: left;
+}
+
+.main-title {
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+section {
+  box-shadow: 1px 1px 3px #d8d8d8;
+  border-radius: 10px;
+  padding: 15px 25px;
+  align-items: center;
+  background-color: white;
+  margin-bottom: 10px;
+}
+
+table, th, td {
+  border: 1px solid black;
+  padding: 5px 15px;
+}

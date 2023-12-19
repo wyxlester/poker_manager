@@ -3,5 +3,26 @@
 {% block body %}
 
   <h1>Player List</h1>
+  <br>
+  <table>
+    <theader>
+      <tr>
+        <th>Name</th>
+        <th>Bankroll</th>
+      </tr>
+    </theader>
+    <tbody>
+      {% for player in players %}
+      <tr>
+        <td>{{ player.name }}</td>
+        <td>{{ player.bankroll }}</td>
+      </tr>
+      {% empty %}
+        <tr>
+          <td>No players.</td>
+        </tr>
+      {% endfor %}
+    <t/body>
+  </table>
 
 {% endblock %}
