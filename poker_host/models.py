@@ -42,6 +42,16 @@ class Session(models.Model):
     end_time = models.DateTimeField()
 
 
+class RebuyEvent(models.Model):
+    player_session = models.ForeignKey(
+        'PlayerSession',
+        on_delete=models.CASCADE,
+        related_name='rebuy_events',
+    )
+    rebuy_amount = models.IntegerField(validators=[MinValueValidator(1)])
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
 class PlayerSession(models.Model):
     player_id = models.ForeignKey(
         Player,
@@ -52,6 +62,14 @@ class PlayerSession(models.Model):
         on_delete=models.CASCADE,
     )
     buy_in = models.IntegerField(validators=[MinValueValidator(1)])
-    cash_out = models.IntegerField(default=0)
-    rebuy = models.IntegerField(default=0)
-    notes = models.TextField(max_length=1000, blank=True, null=True)
+    cash_out = models.IntegerField(null=True, blank=True)
+
+    def total_buy_in(self):
+        if self.rebuy_events.exists():
+            return self.buy_in + sum(rebuy.rebuy_amount for rebuy in self.rebuy_events.all())
+        return self.buy_in
+
+    def calculate_pnl(self):
+        if self.cash_out is not None:
+            return self.cash_out - self.total_buy_in()
+        return "Cash Out Not Recorded"
