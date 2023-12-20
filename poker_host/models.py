@@ -56,6 +56,9 @@ class Session(models.Model):
 
         super().save(*args, **kwargs)
 
+    def get_player_session_count(self):
+        return self.playersession_set.count()
+
 
 class RebuyEvent(models.Model):
     player_session = models.ForeignKey(

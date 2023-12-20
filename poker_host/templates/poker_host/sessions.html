@@ -12,6 +12,7 @@
         <th>Small Blind</th>
         <th>Big Blind</th>
         <th>Duration</th>
+        <th>Players</th>
       </tr>
     </theader>
     <tbody>
@@ -27,6 +28,7 @@
             {{ session.duration_minutes }} mins
           {% endif %}
         </td>
+        <td>{{ session.get_player_session_count }}</td>
       </tr>
       {% empty %}
         <tr>
