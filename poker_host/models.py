@@ -41,6 +41,21 @@ class Session(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
+    duration_hours = models.IntegerField(default=0)
+    duration_minutes = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        # Calculate duration before saving
+        time_difference = self.end_time - self.start_time
+        hours, remainder = divmod(time_difference.seconds, 3600)
+        minutes, _ = divmod(remainder, 60)
+
+        # Save the duration
+        self.duration_hours = hours
+        self.duration_minutes = minutes
+
+        super().save(*args, **kwargs)
+
 
 class RebuyEvent(models.Model):
     player_session = models.ForeignKey(

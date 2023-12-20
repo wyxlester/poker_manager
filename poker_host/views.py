@@ -15,6 +15,19 @@ def player_list(request):
     return render(request, "poker_host/players.html", {"players": players})
 
 
+def time_cleaning(time_difference):
+    hours, remainder = divmod(time_difference.seconds, 3600)
+    minutes, _ = divmod(remainder, 60)
+
+    time_difference_dict = {
+        "hours": hours,
+        "minutes": minutes
+    }
+    return time_difference_dict
+
+
 def session_list(request):
     sessions = Session.objects.all()
-    return render(request, "poker_host/sessions.html", {"sessions": sessions})
+    return render(request, "poker_host/sessions.html", {
+        "sessions": sessions,
+    })

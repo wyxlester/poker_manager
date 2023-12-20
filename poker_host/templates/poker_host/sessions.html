@@ -11,6 +11,7 @@
         <th>Game Type</th>
         <th>Small Blind</th>
         <th>Big Blind</th>
+        <th>Duration</th>
       </tr>
     </theader>
     <tbody>
@@ -20,6 +21,12 @@
         <td>{{ session.game_id.game_type }}</td>
         <td>{{ session.game_id.small_blind }}</td>
         <td>{{ session.game_id.big_blind }}</td>
+        <td>
+          {{ session.duration_hours }} hours
+          {% if session.duration_minutes > 0 %}
+            {{ session.duration_minutes }} mins
+          {% endif %}
+        </td>
       </tr>
       {% empty %}
         <tr>
