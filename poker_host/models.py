@@ -91,3 +91,7 @@ class PlayerSession(models.Model):
         if self.cash_out is not None:
             return self.cash_out - self.total_buy_in()
         return "Cash Out Not Recorded"
+
+    class Meta:
+        # Added the unique_together option to enforce uniqueness of player_id and session_id pairs
+        unique_together = ('player_id', 'session_id')
