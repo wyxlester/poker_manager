@@ -1,0 +1,32 @@
+{% extends "poker_host/layout.html" %}
+
+{% block body %}
+
+  <h1>All sessions</h1>
+  <br>
+  <table>
+    <theader>
+      <tr>
+        <th>S/N</th>
+        <th>Game Type</th>
+        <th>Small Blind</th>
+        <th>Big Blind</th>
+      </tr>
+    </theader>
+    <tbody>
+      {% for session in sessions %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ session.game_id.game_type }}</td>
+        <td>{{ session.game_id.small_blind }}</td>
+        <td>{{ session.game_id.big_blind }}</td>
+      </tr>
+      {% empty %}
+        <tr>
+          <td>No sessions.</td>
+        </tr>
+      {% endfor %}
+    <t/body>
+  </table>
+
+{% endblock %}

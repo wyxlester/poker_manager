@@ -12,4 +12,9 @@ def home(request):
 
 def player_list(request):
     players = Player.objects.all()
-    return render(request, "poker_host/player_list.html", {"players": players})
+    return render(request, "poker_host/players.html", {"players": players})
+
+
+def session_list(request):
+    sessions = Session.objects.all()
+    return render(request, "poker_host/sessions.html", {"sessions": sessions})

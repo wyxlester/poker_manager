@@ -6,5 +6,6 @@ app_name = "poker_host"
 
 urlpatterns = [
     path("", views.home, name="home"),
-    path("player_list/", views.player_list, name="player_list"),
+    path("players/", views.player_list, name="players"),
+    path("sessions/", views.session_list, name="sessions"),
 ]

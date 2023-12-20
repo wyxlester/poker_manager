@@ -2,11 +2,12 @@
 
 {% block body %}
 
-  <h1>Player List</h1>
+  <h1>All Players</h1>
   <br>
   <table>
     <theader>
       <tr>
+        <th>S/N</th>
         <th>Name</th>
         <th>Bankroll</th>
       </tr>
@@ -14,6 +15,7 @@
     <tbody>
       {% for player in players %}
       <tr>
+        <td>{{ forloop.counter }}</td>
         <td>{{ player.name }}</td>
         <td>{{ player.bankroll }}</td>
       </tr>
