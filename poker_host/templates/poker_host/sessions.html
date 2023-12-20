@@ -13,6 +13,8 @@
         <th>Big Blind</th>
         <th>Duration</th>
         <th>Players</th>
+        <th>Status</th>
+        <th>View Session</th>
       </tr>
     </theader>
     <tbody>
@@ -29,6 +31,14 @@
           {% endif %}
         </td>
         <td>{{ session.get_player_session_count }}</td>
+        <td>
+          {% if session.completed %}
+            Completed
+          {% else %}
+            Not completed
+          {% endif %}
+        </td>
+        <td><a href="{% url 'poker_host:session' session.id %}">click me</a></td>
       </tr>
       {% empty %}
         <tr>

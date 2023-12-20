@@ -1,0 +1,15 @@
+<!-- update_session.html -->
+{% extends "your_base_template.html" %}
+
+{% block content %}
+  <h1>Update Cash Out</h1>
+
+  <form method="post" action="{% url 'update_cash_out' player_session_id=player_session.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <input type="submit" value="Update Cash Out">
+  </form>
+
+  <a href="{% url 'your_redirect_url_name' %}">Cancel</a>
+{% endblock %}

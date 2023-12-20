@@ -1,8 +1,8 @@
-from django.conf import settings
-from django.core.validators import MinValueValidator
 from django.db import models
+from django.core.validators import MinValueValidator
+from django.conf import settings
+from django.core.exceptions import ValidationError
 
-# Create your models here.
 class Player(models.Model):
     name = models.CharField(max_length=100)
     bankroll = models.IntegerField(default=0)
@@ -10,6 +10,7 @@ class Player(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
+
     def __str__(self):
         return f"Name: {self.name}, Bankroll: {self.bankroll}, Belongs to: {self.user_id}"
 
@@ -32,7 +33,6 @@ class Game(models.Model):
         on_delete=models.CASCADE,
     )
 
-
 class Session(models.Model):
     game_id = models.ForeignKey(
         Game,
@@ -43,6 +43,7 @@ class Session(models.Model):
 
     duration_hours = models.IntegerField(default=0)
     duration_minutes = models.IntegerField(default=0)
+    completed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # Calculate duration before saving
@@ -54,10 +55,31 @@ class Session(models.Model):
         self.duration_hours = hours
         self.duration_minutes = minutes
 
+        # Check if any PlayerSession is not completed
+        self.completed = self.is_completed()
+
+        # Check if total buy-in equals total cash-out
+        total_buy_in = sum(player_session.total_buy_in() for player_session in self.player_sessions.all())
+        total_cash_out = sum(player_session.cash_out for player_session in self.player_sessions.all() if player_session.cash_out is not None)
+
+        if total_buy_in != total_cash_out:
+            raise ValidationError("Total buy-in does not equal total cash-out.")
+
         super().save(*args, **kwargs)
 
     def get_player_session_count(self):
-        return self.playersession_set.count()
+        return self.player_sessions.count()
+
+    def is_completed(self):
+        # Check if any PlayerSession is not completed
+        if self.player_sessions.filter(cash_out__isnull=True, pnl__isnull=True).exists():
+            return False
+
+        # Check if total buy-in equals total cash-out
+        total_buy_in = sum(player_session.total_buy_in() for player_session in self.player_sessions.all())
+        total_cash_out = sum(player_session.cash_out for player_session in self.player_sessions.all() if player_session.cash_out is not None)
+
+        return total_buy_in == total_cash_out
 
 
 class RebuyEvent(models.Model):
@@ -69,7 +91,6 @@ class RebuyEvent(models.Model):
     rebuy_amount = models.IntegerField(validators=[MinValueValidator(1)])
     timestamp = models.DateTimeField(auto_now_add=True)
 
-
 class PlayerSession(models.Model):
     player_id = models.ForeignKey(
         Player,
@@ -78,9 +99,18 @@ class PlayerSession(models.Model):
     session_id = models.ForeignKey(
         Session,
         on_delete=models.CASCADE,
+        related_name='player_sessions',  # Use a proper related_name
     )
     buy_in = models.IntegerField(validators=[MinValueValidator(1)])
     cash_out = models.IntegerField(null=True, blank=True)
+    pnl = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Calculate PNL before saving if cash_out is provided
+        if self.cash_out is not None:
+            self.pnl = self.calculate_pnl()
+
+        super().save(*args, **kwargs)
 
     def total_buy_in(self):
         if self.rebuy_events.exists():
@@ -88,10 +118,7 @@ class PlayerSession(models.Model):
         return self.buy_in
 
     def calculate_pnl(self):
-        if self.cash_out is not None:
-            return self.cash_out - self.total_buy_in()
-        return "Cash Out Not Recorded"
-
+        # Calculate PNL based on cash_out and total_buy_in
+        return self.cash_out - self.total_buy_in() if self.cash_out is not None else None
     class Meta:
-        # Added the unique_together option to enforce uniqueness of player_id and session_id pairs
         unique_together = ('player_id', 'session_id')

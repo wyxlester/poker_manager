@@ -1,0 +1,45 @@
+{% extends "poker_host/layout.html" %}
+
+{% block body %}
+
+  <h1>Session Show Page</h1>
+  <br>
+  <ul>
+    <li>Session ID: {{ session.id }}</li>
+    <li>Game Type: {{ session.game_id.game_type }}</li>
+    <li>Small Blind: {{ session.game_id.small_blind }}</li>
+    <li>Big Blind: {{ session.game_id.big_blind }}</li>
+    <li>Start Time: {{ session.start_time }}</li>
+    <li>End Time: {{ session.end_time }}</li>
+    <li>Duration: {{ session.duration_hours }} hours, {{ session.duration_minutes }} mins</li>
+    <li>Number of Players: {{ session.get_player_session_count }}</li>
+  </ul>
+  <br>
+  <h2>Player List for this Section</h2>
+  <table>
+    <theader>
+      <tr>
+        <th>S/N</th>
+        <th>Player Name</th>
+        <th>Buy In</th>
+        <th>Rebuy</th>
+        <th>Cash Out</th>
+        <th>PNL</th>
+      </tr>
+    <theader>
+    <tbody>
+      {% for player_session in session.player_sessions.all %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ player_session.player_id.name }}</td>
+          <td>{{ player_session.buy_in }}</td>
+          <td>{{ player_session.rebuy_events.count }}</td>
+          <td>{{ player_session.cash_out }}</td>
+          <td>{{ player_session.pnl }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}
